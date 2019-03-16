@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .building_icons {
+            width: 100px;
+            margin: 40px auto -100px;
+            display: block;
+            position: relative;
+            top: -110px;
+        } 
+
+        .container {
+            margin-top: 3rem;
+        }
+
+        .logo {
+            margin-left: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="z-depth-0">
+        <div class="nav-wrapper">
+        <a href="#" class="brand-logo left logo">Smart City</a>
+        </div>
+    </nav>
+    <h3 class="center-align">Smart City Dashboard</h3>
+    <div class="container">
+        <div class="row">
+            <div class="col s1 l6">
+                <div class="card teal z-depth-0">
+                    <div class="card-content white-text">
+                        <img src="{{ url_for('static', filename='images/smart_home.png')}}" alt="smart_home" class="building_icons">
+                        <div class="card-title center-align">Smart Home</div>
+                        {% block smart_home %}
+                        {% endblock smart_home %}
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
+                        <div class="card-action center-align">
+                            <a href="#">Monitor</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s1 l6">
+                <div class="card teal z-depth-0">
+                    <div class="card-content white-text">
+                        <img src="{{ url_for('static', filename='images/smart_school.png')}}" alt="smart_home" class="building_icons">
+                        <div class="card-title center-align">Smart School</div>
+                        {% block smart_school %}
+                        {% endblock smart_school %}
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
+                        <div class="card-action center-align">
+                            <a href="#">Monitor</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s1 l6">
+                <div class="card teal z-depth-0">
+                    <div class="card-content white-text">
+                        <img src="{{ url_for('static', filename='images/smart_mall.png')}}" alt="smart_home" class="building_icons">
+                        <div class="card-title center-align">Smart Mall</div>
+                        {% block smart_mall %}
+                        {% endblock smart_mall %}
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
+                        <div class="card-action center-align">
+                            <a href="#">Monitor</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s1 l6">
+                <div class="card teal z-depth-0">
+                    <div class="card-content white-text">
+                        <img src="{{ url_for('static', filename='images/smart_hospital.png')}}" alt="smart_home" class="building_icons">
+                        <div class="card-title center-align">Smart Hospital</div>
+                        {% block smart_hospital %}
+                        {% endblock smart_hospital %}
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
+                        <div class="card-action center-align">
+                            <a href="#">Monitor</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/materialize.min.js')}}"></script>
+</body>
+</html>
