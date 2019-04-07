@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block home_page_housing %}
+<h3 class="center-align">Smart city housing dashboard</h3>
+<div class="container">
+    <div class="row">
+        <div class="col s12 l6">
+            <div class="card teal z-depth-0">
+                <div class="card-content white-text">
+                    <img src="{{ url_for('static', filename='images/smart_home.png')}}" alt="smart_home" class="building_icons">
+                    <div class="card-title center-align">Smart Home</div>
+                    Has the ability to call delivery bot, garbage bot & emergency bot. The main entrance gates are also automated to open & close from within the house. 
+                    <div class="card-action center-align">
+                        <a href="{{ url_for('smart_house') }}" class="btn waves-effect z-depth-0">Monitor</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 l6">
+            <div class="card teal z-depth-0">
+                <div class="card-content white-text">
+                    <img src="{{ url_for('static', filename='images/smart_school.png')}}" alt="smart_home" class="building_icons">
+                    <div class="card-title center-align">Smart School</div>
+                    Has the ability to call delivery bot, garbage bot & emergency bot. The school gates are also automated to open & close from within the school. 
+                    <div class="card-action center-align">
+                        <a href="{{ url_for('smart_school') }}" class="btn waves-effect z-depth-0">Monitor</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 l6">
+            <div class="card teal z-depth-0">
+                <div class="card-content white-text">
+                    <img src="{{ url_for('static', filename='images/smart_mall.png')}}" alt="smart_home" class="building_icons">
+                    <div class="card-title center-align">Smart Mall</div>
+                    Has the ability to call garbage bot & emergency bot. The entry gates are also automated to open & close from within the mall. It also has the ability to send delivery bot to any of the buildings on priority basis. The priority basis is given to perishable goods. 
+                    <div class="card-action center-align">
+                        <a href="{{ url_for('smart_mall') }}" class="btn waves-effect z-depth-0">Monitor</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 l6">
+            <div class="card teal z-depth-0">
+                <div class="card-content white-text">
+                    <img src="{{ url_for('static', filename='images/smart_hospital.png')}}" alt="smart_home" class="building_icons">
+                    <div class="card-title center-align">Smart Hospital</div>
+                    Has the ability to call garbage bot & delivery bot. The entry gates are also automated to open & close from within the hospital. It also has the ability to send the emergency bot to any of the buildings on priority basis. 
+                    <div class="card-action center-align">
+                        <a href="{{ url_for('smart_hospital') }}" class="btn waves-effect z-depth-0">Monitor</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock home_page_housing %}

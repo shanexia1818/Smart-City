@@ -1,0 +1,44 @@
+body {
+    background-color: #f0f0f0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+}
+
+.building_icons {
+    width: 100px;
+    margin: 40px auto -100px;
+    display: block;
+    position: relative;
+    top: -110px;
+} 
+
+.container {
+    margin-top: 3rem;
+}
+
+.logo {
+    margin-left: 3rem;
+} 
+
+.footer-copyright {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.page-footer .footer_stylings {
+    margin-left: 3rem;
+}
+
+.card-panel .custom-card-panel {
+    padding: 5rem auto !important;
+}
+
+.row .border-box {
+    padding: 20rem auto !important;
+    border: 1px #f0f0f0 solid;
+    border-radius: 1rem;
+}
+
+.nav-wrapper .csd_logo {
+    margin-left: 2rem;
+    margin-top: 0.15rem;
+}

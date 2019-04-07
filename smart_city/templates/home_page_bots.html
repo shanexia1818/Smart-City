@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block home_page_bots %}
+<h3 class="center-align">Smart city bots dashboard</h3>
+<div class="container">
+    <div class="row">
+        <div class="col s12 l6">
+            <div class="card teal z-depth-0">
+                <div class="card-content white-text">
+                    <img src="{{ url_for('static', filename='images/delivery-bot.png')}}" alt="delivery_bot" class="building_icons">
+                    <div class="card-title center-align">Delivery Bot</div>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
+                    <div class="card-action center-align">
+                        <a href="#" class="btn waves-effect z-depth-0">Monitor</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 l6">
+            <div class="card teal z-depth-0">
+                <div class="card-content white-text">
+                    <img src="{{ url_for('static', filename='images/emergency-bot.png')}}" alt="emergency_bot" class="building_icons">
+                    <div class="card-title center-align">Emergency Bot</div>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
+                    <div class="card-action center-align">
+                        <a href="#" class="btn waves-effect z-depth-0">Monitor</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 l6">
+            <div class="card teal z-depth-0">
+                <div class="card-content white-text">
+                    <img src="{{ url_for('static', filename='images/garbage-bot.png')}}" alt="garbage_bot" class="building_icons">
+                    <div class="card-title center-align">Garbage Bot</div>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
+                    <div class="card-action center-align">
+                        <a href="#" class="btn waves-effect z-depth-0">Monitor</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock home_page_bots%}

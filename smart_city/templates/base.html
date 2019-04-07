@@ -5,97 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <style>
-        body {
-            background-color: #f0f0f0;
-        }
-
-        .building_icons {
-            width: 100px;
-            margin: 40px auto -100px;
-            display: block;
-            position: relative;
-            top: -110px;
-        } 
-
-        .container {
-            margin-top: 3rem;
-        }
-
-        .logo {
-            margin-left: 3rem;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/monitor.css') }}">
 </head>
 <body>
-    <nav class="z-depth-0">
-        <div class="nav-wrapper">
-        <a href="#" class="brand-logo left logo">Smart City</a>
+    <header>
+        <nav class="z-depth-0">
+            <div class="nav-wrapper">
+                <!-- <img src="{{ url_for('static', filename='images/csd_logo.png') }}" alt="csd_logo" class="csd_logo">  -->
+                <a href="{{ url_for('home') }}" class="brand-logo left logo">
+                    Smart City
+                </a>
+                <a href="#" data-target="mobile-links" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down"> 
+                    <li><a href="{{ url_for('home') }}"><i class="material-icons left">home</i>Home</a></li>
+                    <li><a href="{{ url_for('bots') }}">Bots</a></li>
+                    <li><a href="{{ url_for('live_feed') }}"><i class="material-icons left">videocam</i>Video</a></li>
+                </ul>
+            </div>
+        </nav>
+        <ul class="sidenav" id="mobile-links">
+            <li><a href="{{ url_for('home') }}"><i class="material-icons left">home</i>Home</a></li>
+            <li><a href="{{ url_for('bots') }}">Bots</a></li>
+            <li><a href="{{ url_for('live_feed') }}"><i class="material-icons left">videocam</i>Video</a></li>
+        </ul>
+    </header>
+
+    <main>
+        {% block home_page_housing %}
+        {% endblock home_page_housing %}
+    
+        {% block home_page_bots %}
+        {% endblock home_page_bots %}
+
+        {% block smart_home %}
+        {% endblock smart_home %}
+
+        <div class="container web_cam_stylings">
+            {% block webcam_feed %}
+            {% endblock webcam_feed %}
         </div>
-    </nav>
-    <h3 class="center-align">Smart City Dashboard</h3>
-    <div class="container">
-        <div class="row">
-            <div class="col s1 l6">
-                <div class="card teal z-depth-0">
-                    <div class="card-content white-text">
-                        <img src="{{ url_for('static', filename='images/smart_home.png')}}" alt="smart_home" class="building_icons">
-                        <div class="card-title center-align">Smart Home</div>
-                        {% block smart_home %}
-                        {% endblock smart_home %}
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
-                        <div class="card-action center-align">
-                            <a href="#">Monitor</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col s1 l6">
-                <div class="card teal z-depth-0">
-                    <div class="card-content white-text">
-                        <img src="{{ url_for('static', filename='images/smart_school.png')}}" alt="smart_home" class="building_icons">
-                        <div class="card-title center-align">Smart School</div>
-                        {% block smart_school %}
-                        {% endblock smart_school %}
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
-                        <div class="card-action center-align">
-                            <a href="#">Monitor</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col s1 l6">
-                <div class="card teal z-depth-0">
-                    <div class="card-content white-text">
-                        <img src="{{ url_for('static', filename='images/smart_mall.png')}}" alt="smart_home" class="building_icons">
-                        <div class="card-title center-align">Smart Mall</div>
-                        {% block smart_mall %}
-                        {% endblock smart_mall %}
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
-                        <div class="card-action center-align">
-                            <a href="#">Monitor</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col s1 l6">
-                <div class="card teal z-depth-0">
-                    <div class="card-content white-text">
-                        <img src="{{ url_for('static', filename='images/smart_hospital.png')}}" alt="smart_home" class="building_icons">
-                        <div class="card-title center-align">Smart Hospital</div>
-                        {% block smart_hospital %}
-                        {% endblock smart_hospital %}
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Est asperiores magni veniam quis distinctio tenetur eius dolorum dolores! Magni, aliquid.
-                        <div class="card-action center-align">
-                            <a href="#">Monitor</a>
-                        </div>
-                    </div>
+    </main>
+
+    <footer class="page-footer">
+        <div class="container footer_stylings">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="white-text">About smart city</h5>
+                    <p class="grey-text text-lighten-4">
+                        Smart city is a project done by a group of students as a part of ME867 course (Theory & practice of sensors and actuators).
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
-    <script src="{{ url_for('static', filename='js/materialize.min.js')}}"></script>
+        <div class="footer-copyright">
+            © 2019 Center for System Design, NITK Surathkal
+        </div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/materialise-custom.js') }}"></script>
 </body>
 </html>

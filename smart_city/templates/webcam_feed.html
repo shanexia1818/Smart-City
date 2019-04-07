@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block webcam_feed %}
+<div id="web_cam_container">
+    <div id="monitor">
+        <div id="monitorscreen">
+            <img src="{{ url_for('video_feed') }}" alt="webcam_feed" class="webcam_stylings">
+        </div>
+    </div>
+</div>
+{% endblock webcam_feed %}
