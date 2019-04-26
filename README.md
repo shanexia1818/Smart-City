@@ -1,1 +1,1 @@
-# Smart_City
+# Smart city
