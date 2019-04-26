@@ -23,7 +23,7 @@
         </div>
         <div class="row">
             {% for key, value in data.items() %}
-                <div class="col s8">
+                <div class="col s8 house_info">
                     <div class="card-panel z-depth-0">
                         <span>{{ key }}</span>
                     </div>
@@ -33,6 +33,20 @@
     </div>
 
     {% block house_static %}
-        <script src=""></script>
+        <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-firestore.js"></script>
+        <script>
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyBtX5YAvqEleUitoziBOshCXdjX2nzNj_c",
+            authDomain: "smart-city-61e3d.firebaseapp.com",
+            databaseURL: "https://smart-city-61e3d.firebaseio.com",
+            projectId: "smart-city-61e3d",
+            storageBucket: "smart-city-61e3d.appspot.com",
+            messagingSenderId: "1023785624836"
+          };
+          firebase.initializeApp(config);
+        </script>
+        <script src="{{ url_for('static', filename='js/database.js') }}"></script>
     {% endblock house_static %}
 {% endblock smart_home %}
