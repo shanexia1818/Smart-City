@@ -1,0 +1,535 @@
+\documentclass{article}[12pt,a4paper]
+\usepackage{graphicx}
+\usepackage{listings}
+\makeatletter
+\lstset{
+	language=Python,
+	basicstyle=\ttfamily,
+	commentstyle=\rmfamily,
+	texcl,
+	escapechar =`,
+	escapebegin=\lst@commentstyle,
+}
+\makeatother
+\usepackage{geometry}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+\begin{document}
+\begin{titlepage}
+    \begin{tikzpicture}[remember picture, overlay]
+      \draw[line width = 1pt] ($(current page.north west) + (2em,-2em)$) rectangle ($(current page.south east) + (-2em,2em)$);
+    \end{tikzpicture}
+
+    \centering
+    \vspace{-3em}
+    {\Large\textbf{Report}}\\
+    \vspace{1.5em}
+    On\\
+    \vspace{1.5em}
+    {\Huge \textbf{Central Command of smart city}}\\
+    \vspace{3em}
+    {\LARGE \bfseries Submitted by}\\
+    \vspace{2em}
+    {\Large \emph{\textbf{Central command team}}}\\
+    \vspace{4em}
+    {\Large Under the Guidance of}\\
+    \vspace{2em}
+    {\Large \textbf{Prof KV Gangadharan}}\\
+    \vspace{2em}
+    {\Large \textbf{Dept. of Mechanical Engineering,}}\\
+    \vspace{2em}
+    {\Large \textbf{NITK, Surathkal}}\\
+    \vspace{4em}
+    {\Large \textbf{Date of Submission: 27 April, 2019}}\\
+    \vspace{1.5em}
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics{nitk-logo.png}
+    \end{figure}
+    \vspace{2em}
+    {\Large \bfseries Department of Mechanical Engineering}\\
+    \vspace{0.5em}
+    {\Large \bfseries National Institute of Technology Karnataka, Surathkal.}\\
+    \vspace{0.5em}
+    {\Large \bfseries 2019-2020}
+\end{titlepage}
+
+\pagenumbering{roman}
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+
+The smart city project is a part of ME869 Theory and Practice of sensors and actuators course
+
+
+\newpage
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\pagenumbering{arabic}
+
+\section{Objective}
+
+The objective of central command team is to integrate and have a central control over the functions and working of other teams and display the respective task performed on the website running simultaneously on the display screen.
+
+\section{Hardware used}
+Raspberry Pi 3 Model B+ was used as the hardware which acts like a central server receiving instructions, processing them and sending the necessary control action.
+
+\section{Software}
+For the central command:
+\begin{itemize}
+	\item Python
+\end{itemize}
+For the website:
+\begin{itemize}
+	\item Flask (a web microframework for building backend services using python)
+	\item HTML \& CSS
+	\item Javascript \& JQuery
+	\item Materialise CSS as a CSS framework
+	\item Firestore as the database
+\end{itemize}
+
+\section{Hardware specifications}
+
+\section{Usage \& application: Integration approach}
+\begin{itemize}
+	\item The Raspberry Pi is used as a central server where the image processing code is run in order to identify the current location of the bots. 
+	\item Once the location of the bots have been identified, the centroidal data is then sent to the path planning algorithm where the shortest path to the destination node from the current node is identified. 
+	\item Once the coordinates of the path is identified, the data is processed as a series of left and right turns which are then sent to the bot via the MQTT protocol which is then executed by the bot and the bot reaches the destination node.
+\end{itemize}
+
+\section{Design approaches: Logic \& Algorithms}
+\begin{itemize}
+	\item The main idea is to use a data structure to store the identity of the house and the bot called from the house and execute a certain algorithm based on the data stored and to remove the stored identity once the execution of the task is done.
+	\item Hence, a queue is chosen as the primary data structure.
+	\item A queue is a first in first out (FIFO) kind of data structure where the incoming data is stored and after the execution is removed. Multiple tasks can be stored in a queue but the latest task that has been added gets executed first in that order.
+\end{itemize}
+
+\section{Work Completed}
+\begin{itemize}
+	\item The algorithm for storing the data has been completed. The sequence of call for the various tasks from the different buildings is stored and execution of each task through the medium of bots.
+	\item Communication between the algorithm and the data via the MQTT protocol has been established.
+	\item The path planning sequence is successfully generated and sent to the bots through communication.
+	\item The website with database setup and live feed has been completed.
+\end{itemize}
+
+\section{Code with comments}
+\begin{lstlisting}
+import time
+import threading
+import paho.mqtt.client as paho
+from path import path_planning, clear_path
+
+import cv2
+import cv2.aruco as aruco
+import numpy as np
+
+cap = cv2.VideoCapture(1)
+flag = 0
+
+global xref
+global yref
+global sumx
+global sumy
+global bx
+bx = 0
+global by
+by = 0
+v1_path = []
+nodes_coordinates = np.load('calibration_array.npy')
+for i in range(1, len(nodes_coordinates)):
+nodes_coordinates[i][0] -= nodes_coordinates[0][0]
+nodes_coordinates[i][1] -= nodes_coordinates[0][1]
+
+
+def bot_detect(posf):
+global stop_thread
+global bx
+global by
+flag = -1
+source = [1, 1]
+previous = []
+edge_no = []
+
+def detection_function(image, id_num):
+sumx = 0
+sumy = 0
+i = 0
+j = 0
+
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+aruco_dict = aruco.Dictionary_get(aruco.DICT_5X5_250)
+parameters = aruco.DetectorParameters_create()
+corners, ids, _ = aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
+
+markers = aruco.drawDetectedMarkers(frame, corners, ids, (0, 0, 255))
+output_Arr = np.array(corners)
+centroid_array = np.zeros((len(corners), 2))
+if len(corners) > 0:
+for i in range(0, len(corners)):
+sumx = 0
+sumy = 0
+for j in range(0, 4):
+sumx += output_Arr[i][0][j][0]
+sumy += output_Arr[i][0][j][1]
+centroid_array[i][0] = sumx / 4
+centroid_array[i][1] = sumy / 4
+
+for i in range(0, len(corners)):
+cv2.circle(markers, (int(centroid_array[i][0]), int(centroid_array[i][1])), 2, (0, 255, 0), -1)
+
+for i in range(0, len(corners)):
+if id_num == ids[i]:
+return (centroid_array[i][0], centroid_array[i][1], markers)
+
+def node_finder(x, y, id_num, node_coord):
+temp = 0
+for i in range(1, len(node_coord)):
+d = 0
+d = np.sqrt((x - node_coord[i][0]) ** 2 + (y - node_coord[i][1]) ** 2)
+if d < 25:
+temp = 1
+# print("haaaaaaaaaaaaa")
+return i
+
+if temp == 0:
+return None
+
+while (True):
+ret, frame = cap.read()
+try:
+bx, by, markers = detection_function(frame, 21)
+bx = bx - nodes_coordinates[0][0]
+by = by - nodes_coordinates[0][1]
+flag = flag + 1
+except:
+print("bot1 not detected")
+source_1 = node_finder(bx, by, 1, nodes_coordinates)
+print("the bot is in this location:")
+source[0] = source_1
+need_val = source
+
+print(source[0])
+if posf == source[0]:
+break
+cv2.imshow('frame', frame)
+
+# cv2.imshow('res',frame)
+print("................................")
+if cv2.waitKey(1) & 0xFF == ord('q'):
+break
+if posf == need_val[0]:
+break
+cap.release()
+cv2.destroyAllWindows()
+
+
+global stop_thread
+stop_thread = False
+# t1.start()
+
+
+apartment_bot = ''
+hospital_bot = ''
+mall_bot = ''
+school_bot = ''
+data = ''
+
+broker = "iot.eclipse.org"
+port = 1883
+
+previous = [2, 2, 2]
+source = [1, 1, 1]
+
+
+# dummy function :)
+# def pathplan(c1, c2):  # file from image processing team
+#     co = []
+#     return co
+#     # let Building nodes named as A,b,c,d. and bots coordinates
+
+
+class Queue:  # Each time a button is pressed the status gets stored in this queue
+
+def __init__(self):
+self.bot = []
+self.building = []
+self.prev_emergency = ''
+self.prev_garbage = ''
+self.prev_delivery = ''
+
+def is_empty(self):
+return self.bot == []
+
+def prev(self, a, b):
+if b == "emergency":
+if a != self.prev_emergency:
+self.prev_emergency = a
+print("return 1 i.e. prev check tells  NOTcopy")
+return 1
+elif b == "garbage":
+if a != self.prev_garbage:
+self.prev_garbage = a
+print("return 1 i.e. prev check tells  NOTcopy")
+return 1
+elif b == "delivery":
+if a != self.prev_delivery:
+self.prev_delivery = a
+print("return 1 i.e. prev check tells  NOTcopy")
+return 1
+
+print("return 0 i.e. prev check tells copy")
+return 0
+
+def enqueue(self, x, y):
+
+if self.is_empty():
+if (self.prev(y, x)):
+print("In empty enqueue done - " + x + y)
+self.bot.append(x)
+self.building.append(y)
+time.sleep(1)
+else:
+print("Empty queue, redundant messages")
+else:
+if (x == self.bot[0] and y == self.building[0]) or not (self.prev(y, x)):
+print("redundant entry failed")
+time.sleep(1)
+pass
+else:
+print("In NON- empty enqueue done - " + x + y)
+self.bot.append(x)
+self.building.append(y)
+time.sleep(1)
+
+def dequeue(self):
+self.bot.pop(0)
+self.building.pop(0)
+print("pop out good")
+time.sleep(1)
+
+
+q = Queue()
+a = int(0)
+
+
+def subscribe(c_id, topic, server, port):
+cl = mqtt.Client(c_id)
+cl.connect(server, port)
+cl.subscribe(topic)
+cl.on_message = mess
+cl.loop_forever()
+
+
+def on_publish(client, userdata, result):  # create function for callback
+print("data published \n")
+pass
+
+
+# define callback
+def on_message(client, userdata, message):
+global data
+time.sleep(1)
+print("received message =", str(message.payload.decode("utf-8")))
+data = str(message.payload.decode("utf-8"))
+
+
+# functions to access data from subscription
+
+def apartment_val(client, userdata, message):
+global apartment_bot
+apartment_bot = str(message.payload.decode("utf-8"))
+print("in callback func - apartement_val")
+if apartment_bot == "delivery":
+q.enqueue("delivery", "Apartment")
+print("enqueued")
+elif apartment_bot == "emergency":
+q.enqueue("emergency", "Apartment")
+print("enqueued")
+elif apartment_bot == "garbage":
+q.enqueue("garbage", "Apartment")
+print("enqueued")
+print(apartment_bot)
+
+
+def hospital_val(client, userdata, message):
+global hospital_bot
+hospital_bot = str(message.payload.decode("utf-8"))
+if hospital_bot == "delivery":
+print("To enqueue func")
+q.enqueue("delivery", "Hospital")
+elif hospital_bot == "emergency":
+q.enqueue("emergency", "Hospital")
+print("To enqueue func")
+elif hospital_bot == "garbage":
+q.enqueue("garbage", "Hospital")
+print("To enqueue func")
+print(hospital_bot)
+
+
+def mall_val(client, userdata, message):
+global mall_bot
+mall_bot = str(message.payload.decode("utf-8"))
+if mall_bot == "delivery":
+q.enqueue("delivery", "Mall")
+print("To enqueue func")
+elif mall_bot == "emergency":
+q.enqueue("emergency", "Mall")
+print("To enqueue func")
+elif mall_bot == "garbage":
+q.enqueue("garbage", "Mall")
+print("To enqueue func")
+
+
+def school_val(client, userdata, message):
+global school_bot
+school_bot = str(message.payload.decode("utf-8"))
+if school_bot == "delivery":
+q.enqueue("delivery", "School")
+print("To enqueue func")
+elif school_bot == "emergency":
+q.enqueue("emergency", "School")
+print("To enqueue func")
+elif school_bot == "garbage":
+q.enqueue("garbage", "School")
+print("To enqueue func")
+
+
+client = paho.Client(
+"client-001")  # create client object client1.on_publish = on_publish #assign function to callback client1.connect(broker,port) #establish connection client1.publish("building/bulb1","on")
+######Bind function to callback
+
+
+# callback functions attribute to object client
+client.apartment_val = apartment_val
+client.hospital_val = hospital_val
+client.mall_val = mall_val
+client.school_val = school_val
+
+client.message_callback_add("Building/Apartment", apartment_val)
+client.message_callback_add("Building/Hospital", hospital_val)
+client.message_callback_add("Building/Mall", mall_val)
+client.message_callback_add("Building/School", school_val)
+
+#####
+client.on_publish = on_publish
+
+client.on_message = on_message
+print("connecting to broker ", broker)
+client.connect(broker)  # connect
+client.loop_start()  # start loop to process received messages
+print("subscribing ")
+client.subscribe("Building/#")  # subscribe to all
+
+i = 0
+while 1:
+time.sleep(0.5)
+
+print("while loop")
+
+for z in q.building:  # stop the bot at right location
+print("inside path planning clause lv1")
+
+if q.building[i] == "Apartment":
+print("inside path planning clause lv2 - Apartment")
+
+if q.bot[i] == "emergency":  # emergency bot has img_process code as 1
+# call emergency to apartment
+# call fn to get variable source
+
+print("source is " + str(source[0]))
+rl, vehicle_path = path_planning([2, 6], 1, source, previous)  # in (2,6) 2 is the destination and 6 is the next node that the bot is facing.
+previous[0] = v1path[len(v1path) - 2]
+
+print(rl)
+print(vehicle_path)
+print("inside path planning clause lv3")
+# client.publish("Bot/emergency", p)
+bot_detect(2)
+print("thread killed successfully")
+q.dequeue()
+break
+
+
+if q.building[i] == "Hospital":
+print("inside path planning clause lv2 - Hospital")
+
+if q.bot[i] == "emergency":  # emergency bot has img_process code as 1
+# call emergency to apartment
+# call fn to get variable source
+
+print("source is " + str(source[0]))
+rl, vehicle_path = path_planning([8, 7], 1, source, previous)  # in (2,6) 2 is the destination and 6 is the next node that the bot is facing.
+previous[0] = v1path[len(v1path) - 2]
+
+print(rl)
+print(vehicle_path)
+print("inside path planning clause lv3")
+# client.publish("Bot/emergency", p)
+bot_detect(2)
+print("thread killed successfully")
+q.dequeue()
+break
+
+
+if q.building[i] == "Mall":
+print("inside path planning clause lv2 - Mall")
+
+if q.bot[i] == "emergency":  # emergency bot has img_process code as 1
+# call emergency to apartment
+# call fn to get variable source
+
+print("source is " + str(source[0]))
+rl, vehicle_path = path_planning([7, 3], 1, source, previous)  # in (2,6) 2 is the destination and 6 is the next node that the bot is facing.
+previous[0] = v1path[len(v1path) - 2]
+
+print(rl)
+print(vehicle_path)
+print("inside path planning clause lv3")
+# client.publish("Bot/emergency", p)
+bot_detect(2)
+print("thread killed successfully")
+q.dequeue()
+break
+
+
+if q.building[i] == "School":
+print("inside path planning clause lv2 - School")
+
+if q.bot[i] == "emergency":  # emergency bot has img_process code as 1
+# call emergency to apartment
+# call fn to get variable source
+
+print("source is " + str(source[0]))
+rl, vehicle_path = path_planning([4,8 ], 1, source, previous)  # in (2,6) 2 is the destination and 6 is the next node that the bot is facing.
+previous[0] = v1path[len(v1path) - 2]
+
+print(rl)
+print(vehicle_path)
+print("inside path planning clause lv3")
+# client.publish("Bot/emergency", p)
+bot_detect(2)
+print("thread killed successfully")
+q.dequeue()
+break
+
+
+
+############################################################## copy from here onwards.
+
+
+# print("publishing ")
+# client.publish("building/bulb1","on")#publish
+# time.sleep(4)
+# client.disconnect() #disconnect
+# client.loop_stop() #stop loop
+\end{lstlisting}
+
+\newpage
+\begin{thebibliography}{1}
+\addcontentsline{toc}{section}{References}
+    
+\bibitem{adi} Latex Template for NITK, Adithya Bhat, Dept. of Information Technology, NITK, https://github.com/adithyabhatkajake/latex-template-nitk
+
+\end{thebibliography}
+\end{document}

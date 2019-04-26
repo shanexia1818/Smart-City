@@ -1,4 +1,5 @@
-import sqlite3
+import json
+from firebase_admin import db
 from .camera import VideoCamera
 from smart_city import smart_city
 from flask import render_template, Response
@@ -19,20 +20,21 @@ def smart_house():
 	"""
 	This route connects to the page that displays all the push button events fired from the smart house. 
 	"""
-	smart_city_data = sqlite3.connect("./tpsa.db")
-	house_data = smart_city_data.cursor().execute("SELECT id, push_btn_1, push_btn_2, push_btn_3, push_btn_4, date, time FROM HOUSE_DATA")
-	data = []
-	for row in house_data:
-		stored_data = {
-			"id": row[0],
-			"push_btn_1": row[1],
-			"push_btn_2": row[2],
-			"push_btn_3": row[3],
-			"push_btn_4": row[4],
-			"date": row[5],
-			"time": row[6]
-		}
-		data.append(stored_data)
+	# smart_city_data = sqlite3.connect("./tpsa.db")
+	# house_data = smart_city_data.cursor().execute("SELECT id, push_btn_1, push_btn_2, push_btn_3, push_btn_4, date, time FROM HOUSE_DATA")
+	# data = []
+	# for row in house_data:
+	# 	stored_data = {
+	# 		"id": row[0],
+	# 		"push_btn_1": row[1],
+	# 		"push_btn_2": row[2],
+	# 		"push_btn_3": row[3],
+	# 		"push_btn_4": row[4],
+	# 		"date": row[5],
+	# 		"time": row[6]
+	# 	}
+	# 	data.append(stored_data)
+	data = db.reference("house").get()
 	return render_template("house.html", data=data)
 
 

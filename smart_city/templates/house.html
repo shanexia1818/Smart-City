@@ -22,64 +22,17 @@
             </div>
         </div>
         <div class="row">
-            {% for push_button_data in data %}
-                {% if (push_button_data.push_btn_1 == 1 and  push_button_data.push_btn_2 == 0 and push_button_data.push_btn_3 == 0 and push_button_data.push_btn_4 == 0) %}
-                    <div class="col s8">
-                        <div class="card-panel z-depth-0">
-                            <span class="left-align"> Garbage bot has been called ! </span>
-                            <span class="center-align"> {{ push_button_data.date }}</span>
-                            <span class="right-align"> {{ push_button_data.time }}</span>
-                        </div>
+            {% for key, value in data.items() %}
+                <div class="col s8">
+                    <div class="card-panel z-depth-0">
+                        <span>{{ key }}</span>
                     </div>
-                {% elif (push_button_data.push_btn_1 == 0 and  push_button_data.push_btn_2 == 1 and push_button_data.push_btn_3 == 0 and push_button_data.push_btn_4 == 0) %}
-                    <div class="col s8">
-                        <div class="card-panel z-depth-0">
-                            <span> Delivery bot has been called ! </span>
-                            <span> {{ push_button_data.date }}</span>
-                            <span> {{ push_button_data.time }}</span>
-                        </div>
-                    </div>
-                {% elif (push_button_data.push_btn_1 == 0 and  push_button_data.push_btn_2 == 0 and push_button_data.push_btn_3 == 1 and push_button_data.push_btn_4 == 0) %}
-                    <div class="col s8">
-                        <div class="card-panel z-depth-0">
-                            <span> Mall bot has been called ! </span>
-                            <span> {{ push_button_data.date }}</span>
-                            <span> {{ push_button_data.time }}</span>
-                        </div>
-                    </div>
-                {% elif (push_button_data.push_btn_1 == 0 and  push_button_data.push_btn_2 == 0 and push_button_data.push_btn_3 == 0 and push_button_data.push_btn_4 == 1) %}
-                    <div class="col s8">
-                        <div class="card-panel z-depth-0">
-                            <span> Delivery bot has been called ! </span>
-                            <span> {{ push_button_data.date }}</span>
-                            <span> {{ push_button_data.time }}</span>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="col s8">
-                        <div class="card-panel z-depth-0">
-                            <div class="row">
-                                <div class="col s5 offset-s1">
-                                    <div class="row"><span class="#e0e0e0-text text-lighten-2">Activity</span></div>
-                                    <div class="row"> No activity reported !</div>
-                                </div>
-                                <div class="col s1">
-                                    <div class="row"> Time </div>
-                                    <div class="row"> 20.08 </div>
-                                </div>
-                                <div class="col s1">
-                                    <div class="row"> Date </div>
-                                    <div class="row"> 24-03-2019 </div>
-                                </div>
-                                <div class="col s1">
-                                    <div class="row"> Status </div>
-                                    <div class="row"> Unknown </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
+                </div>
             {% endfor %}
         </div>
     </div>
+
+    {% block house_static %}
+        <script src=""></script>
+    {% endblock house_static %}
 {% endblock smart_home %}

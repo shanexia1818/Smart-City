@@ -1,3 +1,4 @@
 Venv/
 .vscode/
 __pycache__/
+smart_city_database_secret.json
