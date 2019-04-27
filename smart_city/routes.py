@@ -34,8 +34,8 @@ def smart_house():
 	# 		"time": row[6]
 	# 	}
 	# 	data.append(stored_data)
-	data = db.reference("house").get()
-	return render_template("house.html", data=data)
+	# data = db.reference("house").get()
+	return render_template("house.html")
 
 
 @smart_city.route("/smart-hospital")
@@ -70,4 +70,4 @@ def video_feed():
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-smart_city.run(debug=True)
+smart_city.run(host= '192.168.43.17', debug=True)

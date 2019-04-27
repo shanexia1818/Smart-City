@@ -8,10 +8,10 @@ smart_city = Flask(__name__)
 smart_city.config.from_object(Config)
 
 # Intialise firebase 
-cred = credentials.Certificate("./smart_city_database_secret.json")
+# cred = credentials.Certificate("./smart_city_database_secret.json")
 
-firebase_admin.initialize_app(cred, options={
-    "databaseURL": "https://smart-city-61e3d.firebaseio.com"
-})
+# firebase_admin.initialize_app(cred, options={
+#     "databaseURL": "https://smart-city-61e3d.firebaseio.com"
+# })
 
 from smart_city import routes
