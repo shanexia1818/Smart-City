@@ -70,4 +70,4 @@ def video_feed():
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-smart_city.run(host= '192.168.43.17', debug=True)
+smart_city.run(debug=True)
