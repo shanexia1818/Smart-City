@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col s8 house_info">
+            <div class="col s8" id="house_info">
             </div>
         </div>
     </div>
@@ -41,6 +41,24 @@
             messagingSenderId: "1023785624836"
           };
           firebase.initializeApp(config);
+
+        const db = firebase.firestore();
+        let house_info = document.getElementById("house_info");
+    
+db.collection('apartment').onSnapshot(snapshot => {
+    snapshot.docChanges().forEach(change => {
+    
+        if (change.type === "added") {
+       for (const key of Object.keys(change.doc.data())) {
+            house_info.innerHTML += `
+                <div class="card-panel z-depth-0 ${key}">
+                    <span>${change.doc.data()[key]}</span>
+                </div>
+            `;
+            }
+        }
+    });
+});
         </script>
         <script src="{{ url_for('static', filename='js/database.js') }}"></script>
     {% endblock house_static %}
