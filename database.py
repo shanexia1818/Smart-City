@@ -9,37 +9,36 @@
 
 import sqlite3
 import datetime
-from serial import Serial
+import paho.mqtt.client as mqtt 
 
 connection = sqlite3.connect("tpsa.db")
 
-ser = Serial(port="\\.\COM3", baudrate=9600)
-while True:
-    data = ser.readline().decode().strip()
-    
-    if data == "1":
-        print(data)
-        connection.execute("INSERT INTO HOUSE_DATA (PUSH_BTN_1, PUSH_BTN_2, PUSH_BTN_3, PUSH_BTN_4, DATE, TIME) \
-        VALUES(1, 0, 0, 0, ?, ?)", (datetime.date.today().strftime('%m/%d/%y') , datetime.datetime.now().time().strftime('%H:%M:%S')))
-        connection.commit()
+bots_called = ['garbage']
+def on_connect(client, userdata, flags, rc): 
+   print("Connected with result code " + str(rc)) 
+   client.subscribe("Building/Apartment")	
+	
 
-    elif data == "2":
+def on_message(client, userdata, msg):
+	print(bots_called)
+	data = str(msg.payload.decode('utf-8'))
+    bots_called.append(data)
+    if (bots_called[len(bots_called) - 1] != data):
         connection.execute("INSERT INTO HOUSE_DATA (PUSH_BTN_1, PUSH_BTN_2, PUSH_BTN_3, PUSH_BTN_4, DATE, TIME) \
-        VALUES(0, 1, 0, 0, ?, ?)", (datetime.date.today().strftime('%m/%d/%y') , datetime.datetime.now().time().strftime('%H:%M:%S')))
-        connection.commit()
-
-    elif data == "3":
-        connection.execute("INSERT INTO HOUSE_DATA (PUSH_BTN_1, PUSH_BTN_2, PUSH_BTN_3, PUSH_BTN_4, DATE, TIME) \
-        VALUES(0, 0, 1, 0, ?, ?)", (datetime.date.today().strftime('%m/%d/%y') , datetime.datetime.now().time().strftime('%H:%M:%S')))
-        connection.commit()
-
-    elif data == "4":
-        connection.execute("INSERT INTO HOUSE_DATA (PUSH_BTN_1, PUSH_BTN_2, PUSH_BTN_3, PUSH_BTN_4, DATE, TIME) \
-        VALUES(0, 0, 0, 1, ?, ?)", (datetime.date.today().strftime('%m/%d/%y') , datetime.datetime.now().time().strftime('%H:%M:%S')))
-        connection.commit()
-
+            VALUES(1, 0, 0, 0, ?, ?)", (datetime.date.today().strftime('%m/%d/%y') , datetime.datetime.now().time().strftime('%H:%M:%S')))
+            connection.commit()
     else:
-        connection.execute("INSERT INTO HOUSE_DATA (PUSH_BTN_1, PUSH_BTN_2, PUSH_BTN_3, PUSH_BTN_4, DATE, TIME) \
-        VALUES(0, 0, 0, 0, ?, ?)", (datetime.date.today().strftime('%m/%d/%y') , datetime.datetime.now().time().strftime('%H:%M:%S')))
-        connection.commit()
+        print("Nothing")
+	print('-----------------')
+
+client = mqtt.Client() 
+client.on_connect = on_connect 
+client.on_message = on_message 
+client.connect('test.mosquitto.org', 1883, 60) 
+
+client.loop_start()
+
+while True:
+	client.subscribe("Building/Apartment")
+	time.sleep(1)
 
